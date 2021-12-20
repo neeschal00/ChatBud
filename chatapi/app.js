@@ -1,4 +1,4 @@
-require('dotenv').config();
+
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -7,14 +7,12 @@ const logger = require('morgan');
 const mongoose = require("mongoose");
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+require("./config/database").connect();
 
-mongoose.connect(process.env.MONGO_URL);
+
 
 const app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
 
 app.use(logger('dev'));
 app.use(express.json());
