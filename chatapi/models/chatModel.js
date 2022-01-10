@@ -63,3 +63,7 @@ const chatSchema = new mongoose.Schema({
     chatIsGroup: { type: Boolean, default: false },
     chatIsChannel: { type: Boolean, default: false },
 });
+
+module.exports = mongoose.model("chat", chatSchema)
+module.exports = mongoose.model("chatMessages", chatMessagesSchema)
+module.exports = mongoose.model("chatMembers", chatMembersSchema)
