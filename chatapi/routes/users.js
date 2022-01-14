@@ -37,4 +37,28 @@ router.post("/register", async (req, res) => {
         
 });
 
+
+router.post("/login", async (req, res) => {
+    const {username,password} = req.body;
+    console.log(username,password);
+    const userData = await userModel.findOne({ username: username });
+    console.log(userData);
+    if (userData === null) {
+        return res.status(401).json({ message: "invalid" })
+    }
+    const isMatch = await bcryptjs.compare(password, userData.password);
+    
+    
+    if (isMatch === false) {
+        return res.status(401).json({ message: "Password Incorrect" })
+    }
+
+    // ticket generate
+    const token = jwt.sign({ userId: userData._id }, "anysecretkey");
+    await userModel.findByIdAndUpdate(userData._id, { isActive: true });
+
+    res.status(200).json({ token: token, message: "You have been logged in sucessfully" });
+})
+
+
 module.exports = router;

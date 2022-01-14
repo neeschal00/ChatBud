@@ -26,6 +26,7 @@ const chatMessagesSchema = new mongoose.Schema({
 const chatMembersSchema = new mongoose.Schema({
     chatId: { type: String, required: true },
     memberId: { type: String, required: true },
+    userId: { type: String, required: true },
     memberName: { type: String, required: true },
     memberAvatar: { type: String, required: true },
     memberType: { type: String, required: true },
