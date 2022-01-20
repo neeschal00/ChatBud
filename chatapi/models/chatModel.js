@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 
 const chatMessagesSchema = new mongoose.Schema({
-    chatId: { type: String, required: true },
+    chatId: { type: String, required: true ,ref: 'ChatSchema'},
     message: { type: String, required: true },
-    senderId: { type: String, required: true },
+    senderId: { type: String, required: true, ref:'ChatMembersSchema' },
     senderName: { type: String, required: true },
     senderAvatar: { type: String, required: true },
     senderType: { type: String, required: true },
@@ -24,20 +24,14 @@ const chatMessagesSchema = new mongoose.Schema({
 });
 
 const chatMembersSchema = new mongoose.Schema({
-    chatId: { type: String, required: true },
-    memberId: { type: String, required: true },
-    userId: { type: String, required: true },
+    chatId: { type: String, required: true ,ref:'ChatSchema'},
+    userId: { type: String, required: true ,ref:'UserSchema'},
     memberName: { type: String, required: true },
     memberAvatar: { type: String, required: true },
     memberType: { type: String, required: true },
-    memberStatus: { type: String, required: true },
-    memberIsOnline: { type: Boolean, required: true },
-    memberIsTyping: { type: Boolean, required: true },
     memberIsDeleted: { type: Boolean, required: true },
     memberIsBlocked: { type: Boolean, required: true },
-    memberIsVerified: { type: Boolean, required: true },
     memberIsAdmin: { type: Boolean, required: true },
-    memberIsActive: { type: Boolean, required: true },
     memberCreatedAt: { type: Date, required: true },
     memberUpdatedAt: { type: Date, required: true },
     createdAt: { type: Date, default: Date.now },
@@ -50,8 +44,8 @@ const chatSchema = new mongoose.Schema({
     chatId: { type: String, required: true, unique: true },
     chatName: { type: String, required: true },
     chatType: { type: String, required: true },
-    chatMembers: { type: Array, default: [] },
-    chatMessages: { type: Array, default: [] },
+    chatMembers: { type: Array, default: [],ref:'ChatMembersSchema' },
+    chatMessages: { type: Array, default: [],ref: 'ChatMessages' },
     chatCreatedAt: { type: Date, default: Date.now },
     chatUpdatedAt: { type: Date, default: Date.now },
     chatIsDeleted: { type: Boolean, default: false },
