@@ -60,5 +60,34 @@ router.post("/login", async (req, res) => {
     res.status(200).json({ token: token, message: "You have been logged in sucessfully" });
 })
 
+router.delete("/delete",auth.verifyUser, async (req,res)=>{
+    const id = req.userData._id;
+    try{
+        const value = await user.findByIdAndDelete(id);
+        res.status(200).json({message: `User with ID ${id} deleted sucessfully`})
+    }
+    catch{
+        res.status(400).json({message: "User Couldn't be deleted"})
+    }
+})
+
+router.post("/buddies/all",auth.verifyUser,async (req,res) => {
+    const id = req.userData._id;
+    
+    const buddies_chat = userModel.findOne({ username: username })
+    
+})
+
+router.delete("/buddies/remove",auth.verifyUser, async (req,res) => {
+    const id = req.userData._id;
+    try{
+        const value = await user.findByIdAndUpdate(id,);
+        res.status(200).json({message: `User with ID ${id} deleted sucessfully`})
+    }
+    catch{
+        res.status(400).json({message: "User Couldn't be deleted"})
+    }
+})
+
 
 module.exports = router;

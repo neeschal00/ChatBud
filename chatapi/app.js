@@ -13,7 +13,9 @@ require("./config/database").connect();
 
 
 const app = express();
+const cors = require('cors');
 
+app.use(cors({origin:'*'}));
 
 app.use(logger('dev'));
 app.use(express.json());

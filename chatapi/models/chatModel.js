@@ -9,15 +9,10 @@ const chatMessagesSchema = new mongoose.Schema({
     senderAvatar: { type: String, required: true },
     senderType: { type: String, required: true },
     senderStatus: { type: String, required: true },
-    senderIsOnline: { type: Boolean, required: true },
-    senderIsTyping: { type: Boolean, required: true },
     senderIsDeleted: { type: Boolean, required: true },
     senderIsBlocked: { type: Boolean, required: true },
-    senderIsVerified: { type: Boolean, required: true },
     senderIsAdmin: { type: Boolean, required: true },
     senderIsActive: { type: Boolean, required: true },
-    senderCreatedAt: { type: Date, required: true },
-    senderUpdatedAt: { type: Date, required: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 
@@ -32,16 +27,12 @@ const chatMembersSchema = new mongoose.Schema({
     memberIsDeleted: { type: Boolean, required: true },
     memberIsBlocked: { type: Boolean, required: true },
     memberIsAdmin: { type: Boolean, required: true },
-    memberCreatedAt: { type: Date, required: true },
-    memberUpdatedAt: { type: Date, required: true },
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
-    
+    memberCreatedAt: { type: Date, default: Date.now,required: true },
+    memberUpdatedAt: { type: Date, default: Date.now,required: true },    
 });
 
 
 const chatSchema = new mongoose.Schema({
-    chatId: { type: String, required: true, unique: true },
     chatName: { type: String, required: true },
     chatType: { type: String, required: true },
     chatMembers: { type: Array, default: [],ref:'ChatMembersSchema' },
@@ -57,6 +48,7 @@ const chatSchema = new mongoose.Schema({
     chatIsPrivate: { type: Boolean, default: false },
     chatIsGroup: { type: Boolean, default: false },
     chatIsChannel: { type: Boolean, default: false },
+    chatPicture:{type:String, default:""},
 });
 
 module.exports = mongoose.model("chat", chatSchema)
