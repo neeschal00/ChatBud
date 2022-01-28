@@ -71,7 +71,7 @@ router.delete("/delete",auth.verifyUser, async (req,res)=>{
     }
 })
 
-router.post("/buddies/all",auth.verifyUser,async (req,res) => {
+router.get("/buddies/all",auth.verifyUser,async (req,res) => {
     const id = req.userData._id;
     
     const buddies_chat = userModel.findOne({ username: username })

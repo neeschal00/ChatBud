@@ -12,6 +12,9 @@ require("./config/database").connect();
 
 
 
+// Adding socket io with http server
+
+
 const app = express();
 const cors = require('cors');
 

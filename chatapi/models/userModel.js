@@ -14,11 +14,12 @@ const userSchema = new mongoose.Schema({
   isBlocked: { type: Boolean, default: false },
   buddies: [{ type: mongoose.Schema.ObjectId, ref: "user" }],
   groups: [{ type: mongoose.Schema.ObjectId, ref: "chat" }],
+  blockedUsers: [{ type: mongoose.Schema.ObjectId, ref: "user" }],
   chats: [{ type: mongoose.Schema.ObjectId, ref: "chat" }],
   channels: [{ type: mongoose.Schema.ObjectId, ref: "chat" }],
   messages: [{ type: mongoose.Schema.ObjectId, ref: "chatMessages" }],
   notifications: [{ type: mongoose.Schema.ObjectId, ref: "notification" }],  
-  profile_picture: { type: String, default: "https://res.cloudinary.com/dzqbzqgjw/image/upload/v1569098981/default_profile_picture_xqjqjy.png" },   
+  profile_picture: { type: String, default: "https://icon-library.com/images/default-profile-icon/default-profile-icon-24.jpg" },   
   bio: { type: String, default: " " },  
 });
 
