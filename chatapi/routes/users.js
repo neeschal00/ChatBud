@@ -33,7 +33,9 @@ router.post("/register", async (req, res) => {
     });
     userData.save().then( (result) => {
         res.status(201).json({"message":"User created successfully"});
-    })
+    }).catch( (err) => {
+        res.status(400).json({"message":err});
+    });
         
 });
 
@@ -60,10 +62,25 @@ router.post("/login", async (req, res) => {
     res.status(200).json({ token: token, message: "You have been logged in sucessfully" });
 })
 
+
+
+//delete users own account
 router.delete("/delete",auth.verifyUser, async (req,res)=>{
-    const id = req.userData._id;
+    const id = req.userInfo._id;
+    console.log(req.userInfo);
     try{
-        const value = await user.findByIdAndDelete(id);
+        const value = await userModel.findByIdAndDelete(id);
+        res.status(200).json({message: `User with ID ${id} deleted sucessfully`})
+    }
+    catch{
+        res.status(400).json({message: "User Couldn't be deleted"})
+    }
+})
+
+router.delete('/delete/:id', auth.adminAuth, async(req,res) => {
+    const id = req.params.id;
+    try{
+        const value = await userModel.findByIdAndDelete(id);
         res.status(200).json({message: `User with ID ${id} deleted sucessfully`})
     }
     catch{
@@ -72,11 +89,50 @@ router.delete("/delete",auth.verifyUser, async (req,res)=>{
 })
 
 router.get("/buddies/all",auth.verifyUser,async (req,res) => {
-    const id = req.userData._id;
+    const id = req.userInfo._id;
     
-    const buddies_chat = userModel.findOne({ username: username })
+    const buddies_chat = await userModel.findOne({_id:id},{username:1,buddies:1}).populate("buddies");
+    console.log(buddies_chat);
+    if (buddies_chat === null) {
+        return res.status(401).json({ message: "invalid" })
+    } else{
+        res.status(200).json(buddies_chat);
+    }
     
 })
+
+
+router.patch('/buddies/add/:id',auth.verifyUser, async(req,res) => {
+    const id =  req.userInfo._id;
+    // console.log(req.userInfo);
+    console.log(id);
+    const userData = await req.userInfo
+    const buddy_id = await req.params.id;
+    const buddy = await userModel.findById(buddy_id);
+    // const body = req.body;
+    // console.log(body);
+    console.log(userData.buddies)
+    console.log("buddy id",buddy_id);
+    
+    // if (userData.buddies.includes(buddy_id)) {
+    //     res.status(400).json({message: "Buddy Already exists"});
+    //     return;
+    // }
+    
+    // try{
+    const user = await userModel.findById(id);
+    console.log(user);
+    user.buddies.push(buddy);
+    await user.save();
+    const buddyv = await userModel.findById(buddy_id);
+    buddyv.buddies.push(user);
+    await buddyv.save();
+    res.status(200).json({message: "Buddy added in each other's list"})
+    // }
+    // catch (err){
+    //     res.status(400).json({message: err})
+    // }
+});
 
 router.delete("/buddies/remove",auth.verifyUser, async (req,res) => {
     const id = req.userData._id;
