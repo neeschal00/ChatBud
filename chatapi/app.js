@@ -22,7 +22,7 @@ app.use(cors({origin:'*'}));
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false })); //you cannot send nested query string with this
 app.use(cookieParser());
 // app.use(express.static(path.join(__dirname, 'public')));
 
