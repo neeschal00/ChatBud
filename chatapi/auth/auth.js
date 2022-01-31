@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/userModel");
 
-module.exports.verifyUser = (req, res, next) => {
+module.exports.verifyUser = async (req, res, next) => {
     // const tokens = await req.headers.authorization.split(" ")[1];
     // console.log(tokens);
     // const data = jwt.verify(tokens, "anysecretkey")
@@ -12,15 +12,13 @@ module.exports.verifyUser = (req, res, next) => {
         const data = jwt.verify(token, "anysecretkey");
         console.log(data.userId);
         console.log("user auth hit")
-        const userData = userModel.findOne({ _id: data.userId })
+        const userData = await userModel.findOne({ _id: data.userId })
         // console.log(userData);
-        try{
-            req.userInfo = userData;
-            next();
+        if (!userData) {
+            return res.status(401).json({ message: "Not authorized" })
         }
-        catch (e) {
-            res.status(403).json({ error: e })
-        }
+        req.userInfo = userData;
+        next();
             
     } catch (e) {
         res.status(400).json({ error: e })
