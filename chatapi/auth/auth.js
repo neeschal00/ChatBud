@@ -26,6 +26,25 @@ module.exports.verifyUser = async (req, res, next) => {
 
 }
 
+
+exports.userSocketAuth = async (socket, next) => {
+  const token = await socket.handshake.query.token;
+  if(token){
+    
+    const data = jwt.verify(token, "anysecretkey",(err, decodedToken) => {
+        if (err) return next(new Error('Authentication error'));
+        socket.decoded = decoded;
+        next();
+      })
+  }
+  else{
+    next(new Error('Authentication error'));
+  }
+  
+  
+}
+
+
 exports.adminAuth = (req, res, next) => {
   const token = req.headers.authorization.split(" ")[1];
   const data = jwt.verify(token, "anysecretkey");

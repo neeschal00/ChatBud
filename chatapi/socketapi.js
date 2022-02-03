@@ -4,6 +4,11 @@ const socketapi = {
     io: io,
 };
 
+const auth = require("./auth/auth");
+
+
+io.use(auth.userSocketAuth);
+
 io.on('connection', (socket) => {
     console.log('a user connected');
     console.log(socket.id);
