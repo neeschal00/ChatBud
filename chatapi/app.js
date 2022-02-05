@@ -25,6 +25,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false })); //you cannot send nested query string with this
 app.use(cookieParser());
 // app.use(express.static(path.join(__dirname, 'public')));
+app.use(logger('combined'));
+
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
