@@ -4,11 +4,10 @@ const mongoose = require("mongoose");
 const chatMessagesSchema = new mongoose.Schema({
     chatId: { type: String, required: true ,ref: 'ChatSchema'},
     message: { type: String, required: true },
+    isSent: { type: Boolean, required: true },
     senderId: { type: String, required: true, ref:'ChatMembersSchema' },
     senderName: { type: String, required: true },
     senderAvatar: { type: String, required: true },
-    senderType: { type: String, required: true },
-    senderStatus: { type: String, required: true },
     senderIsDeleted: { type: Boolean, required: true },
     senderIsBlocked: { type: Boolean, required: true },
     senderIsAdmin: { type: Boolean, required: true },
