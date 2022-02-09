@@ -8,10 +8,9 @@ const chatMessagesSchema = new mongoose.Schema({
     senderId: { type: String, required: true, ref:'ChatMembersSchema' },
     senderName: { type: String, required: true },
     senderAvatar: { type: String, required: true },
-    senderIsDeleted: { type: Boolean, required: true },
-    senderIsBlocked: { type: Boolean, required: true },
-    senderIsAdmin: { type: Boolean, required: true },
-    senderIsActive: { type: Boolean, required: true },
+    senderIsDeleted: { type: Boolean, required: true, default: false },
+    senderIsBlocked: { type: Boolean, required: true,default: false },
+    senderIsAdmin: { type: Boolean, required: true,default: false },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 
