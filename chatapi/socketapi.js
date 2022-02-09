@@ -12,7 +12,7 @@ const auth = require("./auth/auth");
 io.on('connection', (socket) => {
     console.log('a user connected');
     console.log(socket.id);
-    socket.sendStatus("connected");
+    // socket.sendStatus("connected");
     socket.emit('message', { message: 'Welcome to the chat app' });
 
     sendStatus = (status) => {
