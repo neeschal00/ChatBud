@@ -33,7 +33,7 @@ exports.userSocketAuth = async (socket, next) => {
     
     const data = jwt.verify(token, "anysecretkey",(err, decodedToken) => {
         if (err) return next(new Error('Authentication error'));
-        socket.decoded = decoded;
+        socket.decoded = decodedToken;
         next();
       })
   }

@@ -38,6 +38,7 @@ const chatSchema = new mongoose.Schema({
     chatType: { type: String, required: true },
     chatMembers: [{ type: mongoose.Schema.ObjectId, ref: "chatMembers" }],
     chatMessages: [{ type: mongoose.Schema.ObjectId, ref: "chatMessages" }],
+    createdBy: { type: String, required: true, ref: "UserSchema" },
     chatCreatedAt: { type: Date, default: Date.now },
     chatUpdatedAt: { type: Date, default: Date.now },
     chatIsDeleted: { type: Boolean, default: false },

@@ -7,7 +7,7 @@ const socketapi = {
 const auth = require("./auth/auth");
 // require("./config/database").connect();
 
-// io.use(auth.userSocketAuth);
+io.use(auth.userSocketAuth);
 
 io.on('connection', (socket) => {
     console.log('a user connected');
