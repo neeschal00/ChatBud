@@ -17,9 +17,10 @@ require("./config/database").connect();
 
 const app = express();
 const cors = require('cors');
+const helmet = require('helmet');
 
 app.use(cors({origin:'*'}));
-
+app.use(helmet());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false })); //you cannot send nested query string with this
