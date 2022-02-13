@@ -87,6 +87,25 @@ router.post("/profile/upload",auth.verifyUser ,async(req,res)=>{
 
 });
 
+router.patch('/profile/update',auth.verifyUser,async(req,res)=>{
+    const userData = await req.userInfo;
+    const {username,email,bio} = req.body;
+    if (!req.body){
+        return res.status(400).json({message:"the data cannot be empty"})
+    }
+    
+    
+    try{
+        const user = await userModel.findByIdAndUpdate(userData._id,{username:username,email:email,bio:bio,updatedAt:Date.now()});
+        await user.save();
+        
+        res.status(200).json({message: "Successfully updated the user profile"})
+    }
+    catch (err){
+        res.status(400).json({message: err})
+    }
+})
+
 
 //delete users own account
 router.delete("/delete",auth.verifyUser, async (req,res)=>{

@@ -3,3 +3,7 @@ chat_bud/
 
 #chat bud web react dir
 chat_bud_web/
+
+# "JSON to Dart Model" generator tracker files locations.
+/.json_models/
+models.jsonc
