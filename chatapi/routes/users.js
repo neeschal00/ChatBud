@@ -83,13 +83,14 @@ router.get("/profile/:id",auth.verifyUser,async(req,res)=>{
     }
 });
 
-router.post("/profile/upload",uploads.single('filename'),auth.verifyUser ,async(req,res)=>{
+router.post("/profile/upload",uploads.single('ppic'),auth.verifyUser ,async(req,res)=>{
     console.log(req.file);
     if (req.file == undefined) {
         return res.json({
             message: "Invalid file format only jpefg and png allowed"
         })
     }
+    res.status(200).json({"message":"profile uploaded successfully"})
 });
 
 router.patch('/profile/update',auth.verifyUser,async(req,res)=>{
