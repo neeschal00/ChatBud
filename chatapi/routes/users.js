@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcryptjs");
 const auth = require("../auth/auth")
 const router = new express.Router();
-
+const uploads = require("../middleware/upload");
 router.get("/all", async (req, res) => {
     try {
         const users = await userModel.find();
@@ -83,8 +83,13 @@ router.get("/profile/:id",auth.verifyUser,async(req,res)=>{
     }
 });
 
-router.post("/profile/upload",auth.verifyUser ,async(req,res)=>{
-
+router.post("/profile/upload",uploads.single('filename'),auth.verifyUser ,async(req,res)=>{
+    console.log(req.file);
+    if (req.file == undefined) {
+        return res.json({
+            message: "Invalid file format only jpefg and png allowed"
+        })
+    }
 });
 
 router.patch('/profile/update',auth.verifyUser,async(req,res)=>{
@@ -191,6 +196,34 @@ router.delete("/buddies/remove",auth.verifyUser, async (req,res) => {
     }
     catch{
         res.status(400).json({message: "User Couldn't be deleted"})
+    }
+})
+
+router.patch('/block/:id',auth.verifyUser,async(req,res)=>{
+    const id =  req.userInfo._id;
+    // console.log(req.userInfo);
+    console.log(id);
+    const userData = await req.userInfo
+    const blocked_id = await req.params.id;
+    // const body = req.body;
+    // console.log(body);
+    console.log(userData.blockedUsers);
+    console.log("blocked id",blocked_id);
+    
+    if (userData.blockedUsers.includes(blocked_id)) {
+        res.status(400).json({message: "User is already blocked"});
+        return;
+    }
+    
+    try{
+        const user = await userModel.findById(id);
+        console.log(user);
+        user.blockedUsers.push(blocked_id);
+        await user.save();
+        res.status(200).json({message: "The user has been blocked"})
+    }
+    catch (err){
+        res.status(400).json({message: err})
     }
 })
 
