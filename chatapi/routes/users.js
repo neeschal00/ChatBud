@@ -83,6 +83,11 @@ router.get("/profile/:id",auth.verifyUser,async(req,res)=>{
     }
 });
 
+router.post("/profile/upload",auth.verifyUser ,async(req,res)=>{
+
+});
+
+
 //delete users own account
 router.delete("/delete",auth.verifyUser, async (req,res)=>{
     const id = req.userInfo._id;
