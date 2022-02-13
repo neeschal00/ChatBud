@@ -12,8 +12,10 @@ io.use(auth.userSocketAuth);
 io.on('connection', (socket) => {
     console.log('a user connected');
     console.log(socket.id);
+    userId = socket.decoded
     // socket.sendStatus("connected");
-    socket.emit('message', { message: 'Welcome to the chat app' });
+    console.log("userid is sock: ",userId);
+    socket.emit('message', { message: `Welcome to the chat app ${userId} ` });
 
     sendStatus = (status) => {
         socket.emit('status', status);

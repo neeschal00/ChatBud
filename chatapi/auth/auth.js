@@ -34,6 +34,8 @@ exports.userSocketAuth = async (socket, next) => {
     const data = jwt.verify(token, "anysecretkey",(err, decodedToken) => {
         if (err) return next(new Error('Authentication error'));
         socket.decoded = decodedToken;
+        console.log(decodedToken);
+        // socket.userId = decodedToken.userId
         next();
       })
   }
