@@ -90,7 +90,16 @@ router.post("/profile/upload",uploads.single('ppic'),auth.verifyUser ,async(req,
             message: "Invalid file format only jpefg and png allowed"
         })
     }
-    res.status(200).json({"message":"profile uploaded successfully"})
+    try{
+        const user = await userModel.findById(req.userInfo._id);
+        user.profile_picture = req.file.path;
+        await user.save();
+        res.status(200).json({"message":"profile uploaded successfully"})
+        // res.status(200).json(user);
+    }
+    catch(e){
+        res.status(400).json({message:e});
+    }
 });
 
 router.patch('/profile/update',auth.verifyUser,async(req,res)=>{

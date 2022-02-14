@@ -5,10 +5,10 @@ const multer = require("multer");
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, __dirname.replace("middleware","") +"/Pictures")
+        cb(null, "./Pictures/");
     },
     filename: function (req, file, cb) {
-        cb(null, Date.now()+ file.originalname)
+        cb(null, Date.now()+ "_"+file.originalname)
     }
 })
 

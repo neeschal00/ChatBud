@@ -27,6 +27,8 @@ app.use(express.urlencoded({ extended: false })); //you cannot send nested query
 app.use(cookieParser());
 // app.use(express.static(path.join(__dirname, 'public')));
 app.use(logger('combined'));
+app.use('/Pictures', express.static('./Pictures'));
+
 
 
 app.use('/', indexRouter);
