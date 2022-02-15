@@ -16,6 +16,7 @@ io.on('connection', (socket) => {
     // socket.sendStatus("connected");
     console.log("userid is sock: ",userId);
     socket.emit('message', { message: `Welcome to the chat app ${userId} ` });
+    socket.emit("userid",userId);
 
     sendStatus = (status) => {
         socket.emit('status', status);
