@@ -26,6 +26,14 @@ router.get('/all',async(req,res)=>{
   // }
 })
 
+router.get('/alls',auth.verifyUser,async(req,res)=>{
+    try{
+        const chats = await userModel.findById(req.userInfo._id).populate('chats');
+        res.status(200).json(chats);
+    }catch(e){
+        res.status(400).json({message:e,error:true});
+    }
+});
 
 router.post('/create', auth.verifyUser, async (req, res, next) => {
   const data = req.body;
