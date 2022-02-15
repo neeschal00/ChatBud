@@ -53,25 +53,37 @@ router.post('/create', auth.verifyUser, async (req, res, next) => {
   }
 });
 
-router.post('/add',auth.verifyUser,async(req,res)=>{
-    const id = req.userInfo._id;
-    const chat_id = req.body.chat_id;
-    const user = await userModel.findById(id);
-    const chat = await chatModel.findById(chat_id);
-    if(user.chats.includes(chat_id)){
-        res.status(400).json({message:"Chat Already exists"});
+router.post('/create/private',auth.verifyUser,async(req,res)=>{
+    const data = req.body;
+    const userData = req.userInfo;
+    const chatExists = await chatModel.findOne({ chatName: "_",createdBy:userData._id,chatType:"private",chatMembers: {"$in":[data.buddy]} });
+    console.log(chatExists);
+    if (chatExists){
+        res.status(400).json({message: "Chat Already exists"});
         return;
     }
     try{
-        user.chats.push(chat_id);
+        const chat = new chatModel({
+            chatName: "_",
+            chatType: "private",
+            createdBy: req.userInfo._id
+        })
+        const chatCreated = await chat.save().catch(e => {res.status(400).json({message: e})});
+        const user = await userModel.findById(req.userInfo._id);
+        user.chats.push(chatCreated._id);
         await user.save();
-        chat.members.push(user);
-        await chat.save();
-        res.status(200).json({message:"Chat added"});
+        const buddy = await userModel.findById(data.buddy);
+        buddy.chats.push(chatCreated._id);
+        await buddy.save();
+        chatCreated.chatMembers.push(userData._id);
+        chatCreated.chatMembers.push(data.buddy);
+        await chatCreated.save();
+        res.status(200).json({message: "Chat Created"});
     }
     catch(e){
-        res.status(400).json({message:e});
+        res.json({message:e});
     }
+
 });
 
 

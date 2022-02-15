@@ -6,7 +6,7 @@ const chatMessagesSchema = new mongoose.Schema({
     isMedia: { type: Boolean, required: true, default: false },
     mediaType: { type: String, enum:["image","video"], required: true, default: "" },
     mediaUrl: { type: String, required: true, default: "" },
-    senderId: { type: String, required: true, ref:'chatMembers' },
+    senderId: { type: String, required: true, ref:'user' },
     senderName: { type: String, required: true },
     senderAvatar: { type: String, required: true },
     senderIsDeleted: { type: Boolean, required: true, default: false },
