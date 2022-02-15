@@ -86,5 +86,44 @@ router.post('/create/private',auth.verifyUser,async(req,res)=>{
 
 });
 
+router.post('/create/group',auth.verifyUser,async(req,res)=>{
+    const data = req.body;
+    const userData = req.userInfo;
+    if(data.buddies.length<2){
+        res.status(400).json({message:"Minimum 2 Buddies Required"});
+        return;
+    }
+    const chatExists = await chatModel.findOne({ chatName: "_",createdBy:userData._id,chatType:"group",chatMembers: {"$in":data.buddies} });
+    console.log(chatExists);
+    if (chatExists){
+        res.status(400).json({message: "Chat Already exists"});
+        return;
+    }
+    // try{
+        const chat = new chatModel({
+            chatName: "_",
+            chatType: "group",
+            createdBy: req.userInfo._id
+        })
+        const chatCreated = await chat.save().catch(e => {res.status(400).json({message: e})});
+        const user = await userModel.findById(req.userInfo._id);
+        user.chats.push(chatCreated._id);
+        await user.save();
+        chatCreated.chatMembers.push(userData._id);
+        for(let i=0;i<data.buddies.length;i++){
+            const buddy = await userModel.findById(data.buddies[i]);
+            buddy.chats.push(chatCreated._id);
+            await buddy.save();
+            chatCreated.chatMembers.push(data.buddy);
+        }
+        await chatCreated.save();
+        res.status(200).json({message: "Chat Created"});
+    // }
+    // catch(e){
+    //     res.json({message:e});
+    // }
+
+})
+
 
 module.exports = router;
