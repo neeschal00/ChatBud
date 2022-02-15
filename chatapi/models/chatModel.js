@@ -13,7 +13,6 @@ const chatSchema = new mongoose.Schema({
     chatIsActive: { type: Boolean, default: true },
     chatIsVerified: { type: Boolean, default: false },
     chatIsBlocked: { type: Boolean, default: false },
-    chatIsAdmin: { type: Boolean, default: false },
     chatIsPublic: { type: Boolean, default: false },
     chatIsPrivate: { type: Boolean, default: false },
     chatIsGroup: { type: Boolean, default: false },

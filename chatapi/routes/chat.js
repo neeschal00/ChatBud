@@ -129,10 +129,10 @@ router.post('/create/group',auth.verifyUser,async(req,res)=>{
 
 })
 
-router.post('/create/channel',auth.verifyUser, (req, res, next) => {
+router.post('/create/channel',auth.verifyUser, async(req, res, next) => {
   const data = req.body;
   const userData = req.userInfo;
-  const chatExists = await chatModel.findOne({ chatName: data.channelName,createdBy:userData._id,chatType:"channel" });
+  const chatExists = await chatModel.findOne({ chatName: data.channelName,createdBy:userData._id,chatType:"channel"});
   console.log(chatExists);
   if (chatExists) {
     res.status(400).json({ message: 'Channel name already exists', success: false });
@@ -163,6 +163,10 @@ router.post('/add/member',auth.verifyUser,async(req,res)=>{
     const chat = await chatModel.findById(data.chatId);
     if(!chat){
         res.status(400).json({message:"Chat Not Found"});
+        return;
+    }
+    if(chat.createdBy.toString()!==userData._id.toString()){
+        res.status(400).json({message:"You are not the owner of this chat"});
         return;
     }
     if(chat.createdBy.toString()!==userData._id.toString()){
