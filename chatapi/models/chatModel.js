@@ -1,44 +1,12 @@
 const mongoose = require("mongoose");
 
 
-const chatMessagesSchema = new mongoose.Schema({
-    chatId: { type: String, required: true ,ref: 'ChatSchema'},
-    message: { type: String, required: true },
-    isSent: { type: Boolean, required: true },
-    isMedia: { type: Boolean, required: true, default: false },
-    mediaType: { type: String, enum:["image","video"], required: true, default: "" },
-    mediaUrl: { type: String, required: true, default: "" },
-    senderId: { type: String, required: true, ref:'ChatMembersSchema' },
-    senderName: { type: String, required: true },
-    senderAvatar: { type: String, required: true },
-    senderIsDeleted: { type: Boolean, required: true, default: false },
-    senderIsBlocked: { type: Boolean, required: true,default: false },
-    senderIsAdmin: { type: Boolean, required: true,default: false },
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
-
-});
-
-const chatMembersSchema = new mongoose.Schema({
-    chatId: { type: String, required: true ,ref:'ChatSchema'},
-    userId: { type: String, required: true ,ref:'UserSchema'},
-    memberName: { type: String, required: true },
-    memberAvatar: { type: String, required: true },
-    memberType: { type: String, required: true },
-    memberIsDeleted: { type: Boolean, required: true },
-    memberIsBlocked: { type: Boolean, required: true },
-    memberIsAdmin: { type: Boolean, required: true },
-    memberCreatedAt: { type: Date, default: Date.now,required: true },
-    memberUpdatedAt: { type: Date, default: Date.now,required: true },    
-});
-
-
 const chatSchema = new mongoose.Schema({
     chatName: { type: String, required: true },
     chatType: { type: String, required: true },
     chatMembers: [{ type: mongoose.Schema.ObjectId, ref: "chatMembers" }],
     chatMessages: [{ type: mongoose.Schema.ObjectId, ref: "chatMessages" }],
-    createdBy: { type: String, required: true, ref: "UserSchema" },
+    createdBy: { type: String, required: true, ref: "user" },
     chatCreatedAt: { type: Date, default: Date.now },
     chatUpdatedAt: { type: Date, default: Date.now },
     chatIsDeleted: { type: Boolean, default: false },
@@ -54,5 +22,4 @@ const chatSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model("chat", chatSchema)
-module.exports = mongoose.model("chatMessages", chatMessagesSchema)
-module.exports = mongoose.model("chatMembers", chatMembersSchema)
+
