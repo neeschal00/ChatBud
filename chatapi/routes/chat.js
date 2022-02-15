@@ -94,15 +94,16 @@ router.post('/create/group',auth.verifyUser,async(req,res)=>{
         res.status(400).json({message:"Minimum 2 Buddies Required"});
         return;
     }
-    const chatExists = await chatModel.findOne({ chatName: "_",createdBy:userData._id,chatType:"group",chatMembers: {"$in":data.buddies} });
+    console.log(data.buddies);
+    const chatExists = await chatModel.findOne({ chatName: data.groupName,createdBy:userData._id });
     console.log(chatExists);
     if (chatExists){
         res.status(400).json({message: "Chat Already exists"});
         return;
     }
-    // try{
+    try{
         const chat = new chatModel({
-            chatName: "_",
+            chatName: data.groupName,
             chatType: "group",
             createdBy: req.userInfo._id,
             chatIsGroup: true,
@@ -122,10 +123,10 @@ router.post('/create/group',auth.verifyUser,async(req,res)=>{
         }
         await chatCreated.save();
         res.status(200).json({message: "Chat Created"});
-    // }
-    // catch(e){
-    //     res.json({message:e});
-    // }
+    }
+    catch(e){
+        res.json({message:e});
+    }
 
 })
 
@@ -169,29 +170,28 @@ router.post('/add/member',auth.verifyUser,async(req,res)=>{
         res.status(400).json({message:"You are not the owner of this chat"});
         return;
     }
-    if(chat.createdBy.toString()!==userData._id.toString()){
-        res.status(400).json({message:"You are not the owner of this chat"});
-        return;
+    if(chat.chatType==="private"|| chat.chatIsPrivate){
+      res.status(400).json({message:"Cannot add members to private chat"});
     }
-    if(chat.chatType==="private" || chat.chatIsPrivate){
-        const chatExists = await chatModel.findOne({ chatName: "_",createdBy:userData._id,chatType:"private",chatMembers: {"$in":[data.buddy]} });
+    if(chat.chatType==="group"|| chat.chatIsChannel ||chat.chatType=== "channel" || chat.chatIsChannel){
+        const chatExists = await chatModel.findOne({ chatName: "_",createdBy:userData._id,chatMembers: {"$in":[data.buddy]} });
         console.log(chatExists);
         if (chatExists){
             res.status(400).json({message: "Buddy Already is in the chat"});
             return;
         }
-        try{
-            const buddy = await userModel.findById(data.buddy);
-            buddy.chats.push(chat._id);
-            buddy.groups.push(chat._id);
-            await buddy.save();
-            chat.chatMembers.push(data.buddy);
-            await chat.save();
-            res.status(200).json({message: "Buddy Added"});
-        }
-        catch(e){
-            res.status(400).json({message:e});
-        }
+      try{
+          const buddy = await userModel.findById(data.buddy);
+          buddy.chats.push(chat._id);
+          buddy.groups.push(chat._id);
+          await buddy.save();
+          chat.chatMembers.push(data.buddy);
+          await chat.save();
+          res.status(200).json({message: "Buddy Added"});
+      }
+      catch(e){
+          res.status(400).json({message:e});
+      }
 }});
 
 module.exports = router;
