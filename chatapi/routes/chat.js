@@ -29,6 +29,12 @@ router.get('/all',async(req,res)=>{
 
 router.post('/create', auth.verifyUser, async (req, res, next) => {
   const data = req.body;
+  const userData = req.userInfo;
+  const chatExists = await chatModel.findOne({ chatName: data.chatName,createdBy:userData._id });
+  console.log(chatExists);
+  if (chatExists) {
+    res.status(400).json({ message: 'Chat name already exists', success: false });
+  }
   try {
     const chat = new chatModel({
       chatName: data.chatName,
@@ -36,7 +42,10 @@ router.post('/create', auth.verifyUser, async (req, res, next) => {
       createdBy: req.userInfo._id
     })
     const chatCreated = await chat.save().catch(e => {res.status(400).json({message: e})});
-    const user = await userModel.findByIdAndUpdate(req.userInfo._id, {$push: {chats: chatCreated._id}}, {new: true}).catch(e => {res.status(400).json({message: e})});
+    const user = await userModel.findById(req.userInfo._id);
+    user.chats.push(chatCreated._id);
+    await user.save();
+    res.status(200).json({message: "Chat Created"});
   } catch (e) {
     res.json({ message: e });
   }
