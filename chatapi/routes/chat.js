@@ -34,6 +34,7 @@ router.post('/create', auth.verifyUser, async (req, res, next) => {
   console.log(chatExists);
   if (chatExists) {
     res.status(400).json({ message: 'Chat name already exists', success: false });
+    return;
   }
   try {
     const chat = new chatModel({
@@ -46,10 +47,10 @@ router.post('/create', auth.verifyUser, async (req, res, next) => {
     user.chats.push(chatCreated._id);
     await user.save();
     res.status(200).json({message: "Chat Created"});
+
   } catch (e) {
     res.json({ message: e });
   }
-
 });
 
 router.post('/add',auth.verifyUser,async(req,res)=>{
