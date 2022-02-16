@@ -98,18 +98,20 @@ router.post('/create/private',auth.verifyUser,async(req,res)=>{
 router.post('/create/group',auth.verifyUser,async(req,res)=>{
     const data = req.body;
     const userData = req.userInfo;
-    if(data.buddies.length<2){
+    const buddies = data.buddies;
+    if(buddies.length<2){
         res.status(400).json({message:"Minimum 2 Buddies Required"});
         return;
     }
-    console.log(data.buddies);
+    console.log(buddies);
     const chatExists = await chatModel.findOne({ chatName: data.groupName,createdBy:userData._id });
-    console.log(chatExists);
+    // console.log(chatExists);
     if (chatExists){
         res.status(400).json({message: "Chat Already exists"});
         return;
     }
     try{
+      console.log("babu babu");
         const chat = new chatModel({
             chatName: data.groupName,
             chatType: "group",
@@ -118,17 +120,20 @@ router.post('/create/group',auth.verifyUser,async(req,res)=>{
         })
         const chatCreated = await chat.save().catch(e => {res.status(400).json({message: e})});
         const user = await userModel.findById(req.userInfo._id);
-        user.chats.push(chatCreated._id);
-        user.groups.push(chatCreated._id);
+        console.log("baby");
+        user.chats.push(chatCreated);
+        user.groups.push(chatCreated);
         await user.save();
-        chatCreated.chatMembers.push(userData._id);
-        for(let i=0;i<data.buddies.length;i++){
-            const buddy = await userModel.findById(data.buddies[i]);
-            buddy.chats.push(chatCreated._id);
-            buddy.groups.push(chatCreated._id);
-            await buddy.save();
-            chatCreated.chatMembers.push(data.buddy);
-        }
+        chatCreated.chatMembers.push(user);
+        console.log( buddies);
+        buddies.forEach(async(buddy)=>{
+            const buddyUser = await userModel.findById(buddy);
+            buddyUser.chats.push(chatCreated);
+            buddyUser.groups.push(chatCreated);
+            await buddyUser.save();
+            chatCreated.chatMembers.push(buddyUser);
+        });
+        
         await chatCreated.save();
         res.status(200).json({message: "Chat Created"});
     }
@@ -136,6 +141,29 @@ router.post('/create/group',auth.verifyUser,async(req,res)=>{
         res.json({message:e});
     }
 
+})
+
+router.delete('/delete/:id',auth.verifyUser,async(req,res)=>{
+  const id = req.params.id;
+  const userData = req.userInfo;
+  const chatExists = await chatModel.findById(id);
+  if(!chatExists){
+    res.status(400).json({message:"Chat Not Found"});
+    return;
+  }
+  if(chatExists.createdBy.toString()!==userData._id.toString()){
+    res.status(400).json({message:"You are not allowed to delete this chat"});
+    return;
+  }
+  try{
+    const chat = await chatModel.findByIdAndDelete(id);
+    const user = await userModel.findById(userData._id);
+    user.chats.pull(id);
+    await user.save();
+    res.status(200).json({message:"Chat Deleted"});
+  }catch(e){
+    res.status(400).json({message:e});
+  }
 })
 
 router.post('/create/channel',auth.verifyUser, async(req, res, next) => {
@@ -157,8 +185,9 @@ router.post('/create/channel',auth.verifyUser, async(req, res, next) => {
     const chatCreated = await chat.save().catch(e => {res.status(400).json({message: e})});
     const user = await userModel.findById(req.userInfo._id);
     user.chats.push(chatCreated._id);
+    user.channels.push(chatCreated._id);
     await user.save();
-    res.status(200).json({message: "Chat Created"});
+    res.status(200).json({message: "Channel Created"});
 
   } catch (e) {
     res.json({ message: e });
