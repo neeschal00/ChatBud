@@ -6,8 +6,15 @@ const socketapi = {
 
 const auth = require("./auth/auth");
 // require("./config/database").connect();
+const userModel = require("./models/userModel");
 
 io.use(auth.userSocketAuth);
+
+let users = [];
+
+const addUser =(userId,socketId) => {
+    !users.some(user => user.userId === userId) && users.push({userId,socketId});
+}
 
 io.on('connection', (socket) => {
     console.log('a user connected');
@@ -17,6 +24,9 @@ io.on('connection', (socket) => {
     console.log("userid is sock: ",userId);
     socket.emit('message', { message: `Welcome to the chat app ${userId} ` });
     socket.emit("userid",userId);
+    socket.on("addUser",userId=>{
+
+    })
 
     sendStatus = (status) => {
         socket.emit('status', status);
