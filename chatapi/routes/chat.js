@@ -259,7 +259,7 @@ router.post('/add/member',auth.verifyUser,async(req,res)=>{
           buddy.chats.push(chat._id);
           buddy.groups.push(chat._id);
           await buddy.save();
-          chat.chatMembers.push(data.buddy);
+          chat.chatMembers.push(buddy._id);
           await chat.save();
           res.status(200).json({message: "Buddy Added"});
       }
@@ -267,5 +267,45 @@ router.post('/add/member',auth.verifyUser,async(req,res)=>{
           res.status(400).json({message:e});
       }
 }});
+
+
+router.post('/:chatId/sendMessage',auth.verifyUser,async(req,res)=>{
+    const data = req.body;
+    const userData = req.userInfo;
+    const id = req.params.chatId;
+    console.log(id);
+    const chat = await chatModel.findById(id);
+    if(!chat){
+        res.status(400).json({message:"Chat Not Found"});
+        return;
+    }
+    console.log("includes:",chat.chatMembers.includes(userData._id) )
+    console.log("chat:",chat.chatMembers )
+    userObj = await userModel.findById(userData._id);
+    if(!chat.chatMembers.includes(userData._id)){
+        res.status(400).json({message:"You are not a member of this chat"});
+        return;
+    }
+    // if(chat.createdBy.toString()!==userData._id.toString()){
+    //     res.status(400).json({message:"You are not the owner of this chat"});
+    //     return;
+    // }
+    try{
+        const message = new chatMessage({
+            chatId: id,
+            message: data.message,
+            senderId: userData._id,
+            isSent: true,
+        });
+        const messageCreated = await message.save();
+        chat.chatMessages.push(messageCreated);
+        await chat.save();
+        res.status(200).json({message: "Message Sent"});
+    }
+    catch(e){
+        res.status(400).json({message:e});
+    }
+});
+
 
 module.exports = router;
