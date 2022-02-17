@@ -126,6 +126,8 @@ router.post('/create/group',auth.verifyUser,async(req,res)=>{
         await user.save();
         chatCreated.chatMembers.push(user);
         console.log( buddies);
+
+        // async the missing piece
         buddies.forEach(async(buddy)=>{
             const buddyUser = await userModel.findById(buddy);
             buddyUser.chats.push(chatCreated);
@@ -162,6 +164,41 @@ router.delete('/delete/:id',auth.verifyUser,async(req,res)=>{
     await user.save();
     res.status(200).json({message:"Chat Deleted"});
   }catch(e){
+    res.status(400).json({message:e});
+  }
+})
+
+router.post('/:id/leave',auth.verifyUser,async(req,res)=>{
+  const data = req.body;
+  const id = req.params.id;
+  const userData = req.userInfo;
+  const chatExists = await chatModel.findById(id);
+  if(!chatExists){
+    res.status(400).json({message:"Chat Not Found"});
+    return;
+  }
+  if (chatExists.chatMembers.includes(userData._id)){
+    res.status(400).json({message:"You are not a member of this chat"});
+    return;
+  }
+
+  if(chatExists.createdBy.toString()===userData._id.toString()){
+    res.status(400).json({message:"You are not allowed to leave this chat"});
+    return;
+  }
+  if(chatExists.chatType==="private"){
+    res.status(400).json({message:"You are not allowed to leave this chat"});
+  }
+  try{
+    const chat = await chatModel.findById(id);
+    const user = await userModel.findById(userData._id);
+    user.chats.pull(id);
+    await user.save();
+    chat.chatMembers.pull(userData._id);
+    await chat.save();
+    res.status(200).json({message:"User Left"});
+  }
+  catch(e){
     res.status(400).json({message:e});
   }
 })
