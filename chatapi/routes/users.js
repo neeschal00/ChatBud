@@ -25,7 +25,7 @@ router.post("/register", async (req, res) => {
     
     const salt = await bcryptjs.genSalt(10);
     const hashedPassword = await bcryptjs.hash(password, salt)
-    console.log(hashedPassword);
+    // console.log(hashedPassword);
     const userData = new userModel({
         username: username,
         password: hashedPassword,
@@ -102,16 +102,16 @@ router.post("/profile/upload",uploads.single('ppic'),auth.verifyUser ,async(req,
     }
 });
 
+//profile Update
 router.patch('/profile/update',auth.verifyUser,async(req,res)=>{
     const userData = await req.userInfo;
     const {username,email,bio} = req.body;
     if (!req.body){
         return res.status(400).json({message:"the data cannot be empty"})
     }
-    
-    
     try{
-        const user = await userModel.findByIdAndUpdate(userData._id,{username:username,email:email,bio:bio,updatedAt:Date.now()});
+        const user = await userModel.findByIdAndUpdate(userData._id,
+            {username:username,email:email,bio:bio,updatedAt:Date.now()});
         await user.save();
         
         res.status(200).json({message: "Successfully updated the user profile"})
@@ -153,7 +153,8 @@ router.delete('/delete/:id', auth.adminAuth, async(req,res) => {
 router.get("/buddies/all",auth.verifyUser,async (req,res) => {
     const id = req.userInfo._id;
     
-    const buddies_chat = await userModel.findOne({_id:id},{username:1,buddies:1}).populate("buddies");
+    const buddies_chat = await userModel.findOne({_id:id},
+        {username:1,buddies:1}).populate("buddies");
     console.log(buddies_chat);
     if (buddies_chat === null) {
         return res.status(401).json({ message: "invalid" })
@@ -167,21 +168,14 @@ router.get("/buddies/all",auth.verifyUser,async (req,res) => {
 //to add a buddy to a user
 router.patch('/buddies/add/:id',auth.verifyUser, async(req,res) => {
     const id =  req.userInfo._id;
-    // console.log(req.userInfo);
-    console.log(id);
     const userData = await req.userInfo
     const buddy_id = await req.params.id;
     const buddy = await userModel.findById(buddy_id);
-    // const body = req.body;
-    // console.log(body);
-    console.log(userData.buddies)
-    console.log("buddy id",buddy_id);
-    
+    if (buddy === null) {
+        return res.status(401).json({ message: "User Id doesn't exist" });}
     if (userData.buddies.includes(buddy_id)) {
-        res.status(400).json({message: "Buddy Already exists"});
-        return;
+        return res.status(400).json({message: "Buddy Already exists"});
     }
-    
     try{
         const user = await userModel.findById(id);
         console.log(user);
@@ -201,7 +195,8 @@ router.patch('/buddies/add/:id',auth.verifyUser, async(req,res) => {
 router.delete("/buddies/remove",auth.verifyUser, async (req,res) => {
     const id = req.userData._id;
     try{
-        const value = await user.findByIdAndUpdate(id,{ $pull: { buddies: req.params.comment_id }});
+        const value = await user.findByIdAndUpdate(id,
+            { $pull: { buddies: req.params.comment_id }});
         res.status(200).json({message: `User with ID ${id} deleted sucessfully`})
     }
     catch{
@@ -209,22 +204,19 @@ router.delete("/buddies/remove",auth.verifyUser, async (req,res) => {
     }
 })
 
+//block user id
 router.patch('/block/:id',auth.verifyUser,async(req,res)=>{
     const id =  req.userInfo._id;
-    // console.log(req.userInfo);
-    console.log(id);
     const userData = await req.userInfo
     const blocked_id = await req.params.id;
-    // const body = req.body;
-    // console.log(body);
-    console.log(userData.blockedUsers);
-    console.log("blocked id",blocked_id);
-    
+    const blocked = await userModel.findById(blocked_id);
+    if (blocked === null) {
+        return res.status(401).json({ message: "User Id doesn't exist" });
+    }
     if (userData.blockedUsers.includes(blocked_id)) {
         res.status(400).json({message: "User is already blocked"});
         return;
     }
-    
     try{
         const user = await userModel.findById(id);
         console.log(user);
