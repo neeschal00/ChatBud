@@ -307,5 +307,30 @@ router.post('/:chatId/sendMessage',auth.verifyUser,async(req,res)=>{
     }
 });
 
+router.delete('/:chatId/delete/:messageId',auth.verifyUser,async(req,res)=>{  
+    const data = req.body;
+    const userData = req.userInfo;
+    const id = req.params.chatId;
+    const messageId = req.params.messageId;
+    const chat = await chatModel.findById(id);
+    if(!chat){
+        res.status(400).json({message:"Chat Not Found"});
+        return;
+    }
+    if(chat.createdBy.toString()!==userData._id.toString()){
+        res.status(400).json({message:"You are not the owner of this chat"});
+        return;
+    }
+    try{
+        const message = await chatMessage.findById(messageId);
+        chat.chatMessages.pull(message);
+        await chat.save();
+        message.delete();
+        res.status(200).json({message: "Message Deleted"});
+    }
+    catch(e){
+        res.status(400).json({message:e});
+    }
+});
 
 module.exports = router;
