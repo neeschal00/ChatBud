@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const chatMembersSchema = new mongoose.Schema({
     chatId: { type: String, required: true ,ref:'chat'},
     userId: { type: String, required: true ,ref:'user'},
-    memberName: { type: String, required: true },
+    memberName: { type: String, required: true, max:100 },
     memberAvatar: { type: String, required: true },
     memberType: { type: String, required: true },
     memberIsDeleted: { type: Boolean, required: true },

@@ -262,10 +262,10 @@ router.post('/:chatId/sendMessage',auth.verifyUser,async(req,res)=>{
     console.log("includes:",chat.chatMembers.includes(userData._id) )
     console.log("chat:",chat.chatMembers )
     userObj = await userModel.findById(userData._id);
-    if(!chat.chatMembers.includes(userData._id)){
-        res.status(400).json({message:"You are not a member of this chat"});
-        return;
-    }
+    // if(!chat.chatMembers.includes(userData._id)){
+    //     res.status(400).json({message:"You are not a member of this chat"});
+    //     return;
+    // }
     // if(chat.createdBy.toString()!==userData._id.toString()){
     //     res.status(400).json({message:"You are not the owner of this chat"});
     //     return;
