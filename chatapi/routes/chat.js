@@ -26,9 +26,10 @@ router.get('/all',async(req,res)=>{
   // }
 })
 
-router.get('/details/:id',async(req,res)=>{
+router.get('/details/:id',auth.verifyUser,async(req,res)=>{
+
   try{
-    const chat = await chatModel.findById(req.params.id).populate('chatMembers').populate('chatMessages');
+    const chat = await chatModel.findById(req.params.id).populate('chatMembers').populate('chatMessages').sort({"chatMessages.createdAt":"desc"});
     res.status(200).json(chat);
   } 
   catch(e){
@@ -37,7 +38,7 @@ router.get('/details/:id',async(req,res)=>{
 });
 router.get('/all/user',auth.verifyUser,async(req,res)=>{
     try{
-        const chats = await userModel.findById(req.userInfo._id).populate('chats');
+        const chats = await userModel.findById(req.userInfo._id).populate('chats').sort({"chats.createdAt":"desc"});
         console.log(chats);
         res.status(200).json(chats);
     }catch(e){
