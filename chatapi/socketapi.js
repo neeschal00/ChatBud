@@ -16,6 +16,10 @@ const addUser =(userId,socketId) => {
     !users.some(user => user.userId === userId) && users.push({userId,socketId});
 }
 
+const removeUser =(userId,socketId) => {
+    users = users.filter(user => user.socketId !== socketId);
+}
+
 io.on('connection', (socket) => {
     console.log('a user connected');
     console.log(socket.id);
@@ -25,7 +29,8 @@ io.on('connection', (socket) => {
     socket.emit('message', { message: `Welcome to the chat app ${userId} ` });
     socket.emit("userid",userId);
     socket.on("addUser",userId=>{
-
+        addUser(userId,socket.id);
+        io.emit("getActive",users);
     })
 
     sendStatus = (status) => {
@@ -33,6 +38,8 @@ io.on('connection', (socket) => {
     }
     socket.on("disconnect",()=>{
         console.log("user disconnected",socket.id);
+        removeUser(socket.id);
+        io.emit("getActive",users);
     });
 });
 
