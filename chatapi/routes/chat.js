@@ -26,6 +26,15 @@ router.get('/all',async(req,res)=>{
   // }
 })
 
+router.get('/details/:id',async(req,res)=>{
+  try{
+    const chat = await chatModel.findById(req.params.id).populate('chatMembers').populate('chatMessages');
+    res.status(200).json(chat);
+  } 
+  catch(e){
+    res.status(400).json({message:e,error:true});
+  }
+});
 router.get('/all/user',auth.verifyUser,async(req,res)=>{
     try{
         const chats = await userModel.findById(req.userInfo._id).populate('chats');
@@ -35,6 +44,7 @@ router.get('/all/user',auth.verifyUser,async(req,res)=>{
         res.status(400).json({message:e,error:true});
     }
 });
+
 
 router.post('/create', auth.verifyUser, async (req, res, next) => {
   const data = req.body;
