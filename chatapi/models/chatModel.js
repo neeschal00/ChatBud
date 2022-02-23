@@ -18,5 +18,10 @@ const chatSchema = new mongoose.Schema({
     chatPicture:{type:String, default:""},
 });
 
+chatSchema.pre("update", function (next) {
+    this.chatUpdatedAt = Date.now();
+    next();
+})
+
 module.exports = mongoose.model("chat", chatSchema)
 
