@@ -73,6 +73,15 @@ router.get("/profile",auth.verifyUser,async(req,res)=>{
     }
 });
 
+router.get('/search',auth.verifyUser,async(req,res)=>{
+    try{
+        const user = await userModel.find({username: {"$regex": "^"+req.query.username,$options: 'i'}});
+        res.status(200).json(user);
+    }catch(e){
+        res.status(400).json({message:e});
+    }
+});
+
 //to view other profile
 router.get("/profile/:id",auth.verifyUser,async(req,res)=>{
     try{
