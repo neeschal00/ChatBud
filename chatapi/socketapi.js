@@ -7,6 +7,10 @@ const socketapi = {
 const auth = require("./auth/auth");
 // require("./config/database").connect();
 const userModel = require("./models/userModel");
+const chatModel = require("./models/chatModel");
+const addChat =(chatId,socketId) => {
+    !chats.some(chat => chat.chatId === chatId) && chats.push({chatId,socketId});
+}
 
 io.use(auth.userSocketAuth);
 
@@ -18,6 +22,10 @@ const addUser =(userId,socketId) => {
 
 const removeUser =(userId,socketId) => {
     users = users.filter(user => user.socketId !== socketId);
+}
+
+const getUser =(userId) => {
+    return users.find(user => user.userId === userId);
 }
 
 io.on('connection', (socket) => {
@@ -32,6 +40,10 @@ io.on('connection', (socket) => {
         addUser(userId,socket.id);
         io.emit("getActive",users);
     })
+
+    socket.on("sendMessage",({userId,receiverId,text}=>{
+
+    });
 
     sendStatus = (status) => {
         socket.emit('status', status);

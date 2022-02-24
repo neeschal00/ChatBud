@@ -126,14 +126,22 @@ router.post('/create/group',auth.verifyUser,async(req,res)=>{
         await user.save();
         chatCreated.chatMembers.push(user);
 
+
+        for(let i=0;i<buddies.length;i++){
+            const buddy = await userModel.findById(buddies[i]);
+            buddy.chats.push(chatCreated);
+            buddy.groups.push(chatCreated);
+            await buddy.save();
+            chatCreated.chatMembers.push(buddy);
+        }
         // async the missing piece to add buddies in each chat
-        buddies.forEach(async(buddy)=>{
-            const buddyUser = await userModel.findById(buddy);
-            buddyUser.chats.push(chatCreated);
-            buddyUser.groups.push(chatCreated);
-            await buddyUser.save();
-            chatCreated.chatMembers.push(buddyUser);
-        });
+        // buddies.forEach(async(buddy)=>{
+        //     const buddyUser = await userModel.findById(buddy);
+        //     buddyUser.chats.push(chatCreated);
+        //     buddyUser.groups.push(chatCreated);
+        //     await buddyUser.save();
+        //     chatCreated.chatMembers.push(buddyUser);
+        // });
         await chatCreated.save();
         res.status(200).json({message: "Chat Created"});
     }
