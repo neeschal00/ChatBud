@@ -8,7 +8,7 @@ const auth = require("./auth/auth");
 // require("./config/database").connect();
 const userModel = require("./models/userModel");
 const chatModel = require("./models/chatModel");
-const chatMessage = require("./models/chatMessage");
+const chatMessage = require("./models/chatMessages");
 const addChat =(chatId,socketId) => {
     !chats.some(chat => chat.chatId === chatId) && chats.push({chatId,socketId});
 }
@@ -42,18 +42,19 @@ io.on('connection', (socket) => {
         io.emit("getActive",users);
     })
 
-    socket.on("sendMessage",({userId,receiverId,text})=>{
-        const user = getUser(receiverId);
+    socket.on("sendMessage",({userId,chatId,text})=>{
+        const user = getUser(userId);
         const chat = new chatMessage({
-            chatId: receiverId,
+            chatId: chatId,
             senderId: userId,
             message: text,
             isSent: true,
         })
         chat.save();
-        io.to(user.socketId).emit("getmessage",{
-            senderId,text
-        });
+        console.log("chat is ",chat);
+        
+        
+        io.emit("getmessage",chat);
     });
 
     sendStatus = (status) => {
