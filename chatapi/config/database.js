@@ -13,6 +13,7 @@ exports.connect = () => {
     })
     .then(() => {
       console.log("Successfully connected to database");
+      console.log(MONGO_URL);
     })
     .catch((error) => {
       console.log("database connection failed. exiting now...");

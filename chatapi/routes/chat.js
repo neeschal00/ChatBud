@@ -17,13 +17,14 @@ router.get('/', auth.verifyUser,async(req,res)=>{
 });
 
 router.get('/all',async(req,res)=>{
-  // try{
+  
+  try{
     const chats = await chatModel.find().populate('chatMembers');
     res.status(200).json(chats);
-  // } 
-  // catch(e){
-  //   res.status(400).json({message:e,error:true});
-  // }
+  } 
+  catch(e){
+    res.status(400).json({message:e,error:true});
+  }
 })
 
 router.get('/details/:id',auth.verifyUser,async(req,res)=>{
