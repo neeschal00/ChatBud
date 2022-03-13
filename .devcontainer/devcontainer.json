@@ -3,9 +3,12 @@
 // Update the VARIANT arg in docker-compose.yml to pick a Node.js version
 {
 	"name": "Node.js & Mongo DB",
+	"workspaceFolder": "/workspace",
+	"context": "..",
+    "runArgs": [ "--cap-add=NET_ADMIN", "--cap-add=NET_RAW", "--device=/dev/net/tun" ],
+    "postStartCommand": "/etc/init.d/tailscaled start",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
-	"workspaceFolder": "/workspace",
 
 	// Set *default* container specific settings.json values on container create.
 	"settings": {},
@@ -25,9 +28,10 @@
 	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "node",
 	"features": {
-		"docker-in-docker": "20.10",
-		"docker-from-docker": "20.10",
-		"git": "os-provided",
-		"sshd": "latest"
+		"docker-in-docker": "latest",
+		"git": "latest",
+		"github-cli": "latest",
+		"sshd": "latest",
+		"python": "latest"
 	}
 }

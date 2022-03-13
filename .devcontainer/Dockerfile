@@ -13,6 +13,8 @@ RUN . /etc/os-release \
         && apt-get clean -y && rm -rf /var/lib/apt/lists/*; \
     fi
 
+# tailscale
+RUN curl -fsSL https://tailscale.com/install.sh | sh
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 #     && apt-get -y install --no-install-recommends <your-package-list-here>
