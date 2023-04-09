@@ -1,6 +1,8 @@
 
 const createError = require('http-errors');
 const express = require('express');
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -19,12 +21,40 @@ const app = express();
 const cors = require('cors');
 const helmet = require('helmet');
 
+const options = {
+  definition: {
+    openapi: "3.0.1",
+    info: {
+      title: "Usage of Swagger in api",
+      version: "0.1.0",
+      description:
+        "This is a simple CRUD API application made with Express and documented with Swagger",
+      license: {
+        name: "MIT",
+        url: "https://spdx.org/licenses/MIT.html",
+      },
+    },
+    servers: [
+      {
+        url: "http://localhost:3000/chat",
+      },
+    ],
+  },
+  apis: ["./routes/*.js"],
+};
+const specs = swaggerJsdoc(options);
+
 app.use(cors({origin:'*'}));
 app.use(helmet());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false })); //you cannot send nested query string with this
 app.use(cookieParser());
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(specs,{ explorer: true })
+);
 // app.use(express.static(path.join(__dirname, 'public')));
 app.use(logger('combined'));
 app.use('/Pictures', express.static('Pictures'));
