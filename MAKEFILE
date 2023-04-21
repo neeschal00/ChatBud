@@ -1,5 +1,9 @@
-# build image using docker file
+# build image using docker file the '.' builds and search from the same directory
 build-image:
 
-	d
+	docker build -t chatbud .
+
+#
+run-image:
+	docker run -p 3000:3000 chatbud 
 

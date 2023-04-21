@@ -1,7 +1,18 @@
 FROM node:16
 
-WORKDIR /chatapi
-COPY package.json .
+# Set the working directory to /app
+WORKDIR /chatbud
+
+# Copy the package.json and package-lock.json files to the container
+COPY ./chatapi/package*.json ./
+
+# Install app dependencies
 RUN npm install
-COPY . .
+
+# Make port 3000 available to the world outside this container
+EXPOSE 3000
+
+# Copy the rest of the application code to the container
+COPY ./chatapi .
+
 CMD npm run start
