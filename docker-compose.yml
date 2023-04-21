@@ -1,0 +1,16 @@
+version: '3.8'
+
+services: 
+    app:
+      build: 
+        context: .
+        dockerfile: DockerFile
+      env_file: ./.env
+      expose: 
+        - "3000"
+      ports:
+        - ${PORT}:${PORT} 
+      environment:
+        - MONGO_URL=${MONGO_URL}
+        - PORT=${PORT}
+      
