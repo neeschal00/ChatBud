@@ -23,8 +23,9 @@ services:
       - 3000:3000 
     environment:
       # container is not a localhost so if using the container url use mongo container or service
-      MONGO_URL: mongodb://mongo_db:27017/my_db/
-      # MONGO_URL: mongodb+srv://godzilla:godzilla@cluster1.wuuzp7n.mongodb.net/test
+      # the db name shouldn't have special char
+      MONGO_URL: mongodb://mongo_db:27017/myDb
+      # MONGO_URL: mongo atlas url
       PORT: 3000
     
     depends_on:

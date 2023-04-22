@@ -10,3 +10,6 @@ run-image:
 # -d for detaiched mode
 build-compose:
 	docker-compose up -d 
+
+# If you want to use mongodb atlas remove mongo-db service from docker-compose and add atlas url in the environment 
+# You should also remove the depends on from the chatbud service
