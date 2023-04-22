@@ -1,16 +1,36 @@
 version: '3.8'
 
-services: 
-    app:
-      build: 
-        context: .
-        dockerfile: DockerFile
-      env_file: ./.env
-      expose: 
-        - "3000"
-      ports:
-        - ${PORT}:${PORT} 
-      environment:
-        - MONGO_URL=${MONGO_URL}
-        - PORT=${PORT}
+services:
+
+  mongo_db:
+    container_name: mongo_container
+    image: mongo:latest
+    # restart if container fails 
+    restart: always
+
+    # for data to be persistent in local machine
+    volumes: 
+      - mongo_db:/data/db
+
+  
+  chatbud:
+    # finds dockerfile to build and get docker file
+    build: .
+      # context: .
+      # dockerfile: Dockerfile
+    
+    ports:
+      - 3000:3000 
+    environment:
+      # container is not a localhost so if using the container url use mongo container or service
+      MONGO_URL: mongodb://mongo_db:27017/my_db/
+      # MONGO_URL: mongodb+srv://godzilla:godzilla@cluster1.wuuzp7n.mongodb.net/test
+      PORT: 3000
+    
+    depends_on:
+      - mongo_db
+
+volumes:
+  mongo_db: {}
+
       

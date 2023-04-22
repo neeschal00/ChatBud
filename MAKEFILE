@@ -7,3 +7,6 @@ build-image:
 run-image:
 	docker run -p 3000:3000 chatbud 
 
+# -d for detaiched mode
+build-compose:
+	docker-compose up -d 

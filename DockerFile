@@ -1,6 +1,6 @@
 FROM node:16
 
-# Set the working directory to /app
+# Set/ create  the working directory to /app in the container
 WORKDIR /chatbud
 
 # Copy the package.json and package-lock.json files to the container
